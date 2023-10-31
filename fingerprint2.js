@@ -29,3 +29,20 @@ function getCookie(name) {
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(';').shift();
 }
+
+async function checkAndUpdateFingerprint() {
+    const storedFingerprint = getCookie('fingerprint');
+    if (storedFingerprint) {
+        const FingerprintJS = await import('https://openfpcdn.io/fingerprintjs/v4');
+        const fp = await FingerprintJS.load();
+
+        const result = await fp.get();
+        const visitorId = result.visitorId;
+
+        if (visitorId !== storedFingerprint) {
+            // Fingerprint has changed, update the cookie
+            setCookie('fingerprint', visitorId, 365);
+            document.getElementById('fingerprint_update').innerText = `Update stored id to: ${visitorId}`;
+        }
+    }
+}
