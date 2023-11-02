@@ -41,7 +41,7 @@ async function checkAndUpdateFingerprint() {
         if (visitorId !== storedFingerprint) {
             // Fingerprint has changed, update the cookie
             setCookie('fingerprint', visitorId, 365);
-            document.getElementById('fingerprint_update').innerText = `Update stored id to: ${visitorId}`;
+            console.log("Updated id to: "+visitorId);
         }
     }
 }
