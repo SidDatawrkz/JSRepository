@@ -4,16 +4,8 @@ async function getfingerprint() {
         console.log("Fingerprint is already stored in cookie: "+storedFingerprint);
         return storedFingerprint;
     } else {
-        const FingerprintJS = await import('https://openfpcdn.io/fingerprintjs/v4');
-        const fp = await FingerprintJS.load();
-
-        const result = await fp.get();
-        const visitorId = result.visitorId;
-        console.log(visitorId);
-
-        setCookie('fingerprint', visitorId, 365);
-        console.log("Fingerprint saved in cookie: "+visitorId);
-        return visitorId;
+        console.log("Default fingerprint 85e1293153c56349abd3530e3d16e6a3");
+        return "85e1293153c56349abd3530e3d16e6a3";
     }
 }
 
@@ -30,18 +22,21 @@ function getCookie(name) {
     if (parts.length === 2) return parts.pop().split(';').shift();
 }
 async function checkAndUpdateFingerprint() {
+    const FingerprintJS = await import('https://openfpcdn.io/fingerprintjs/v4');
+    const fp = await FingerprintJS.load();
+    const result = await fp.get();
+    const visitorId = result.visitorId;
+
     const storedFingerprint = getCookie('fingerprint');
     if (storedFingerprint) {
-        const FingerprintJS = await import('https://openfpcdn.io/fingerprintjs/v4');
-        const fp = await FingerprintJS.load();
-
-        const result = await fp.get();
-        const visitorId = result.visitorId;
-
         if (visitorId !== storedFingerprint) {
             // Fingerprint has changed, update the cookie
             setCookie('fingerprint', visitorId, 365);
             console.log("Updated id to: "+visitorId);
         }
+    }
+    else {
+        setCookie('fingerprint', visitorId, 365);
+        console.log("Fingerprint saved in cookie: "+visitorId);
     }
 }
